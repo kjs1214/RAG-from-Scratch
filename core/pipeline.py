@@ -49,7 +49,7 @@ class RAGPipeline:
         """[1. 질문 벡터화] -> [2. 문서 검색] -> [3. 답변 생성]"""
         start_time = time.time()
         
-        # 2차원 배열 (1, 768) 형태 유지 -> FAISS가 정상 작동
+        # 2차원 배열 (1, 768) 형태 유지
         query_embedding = self.embedder.encode([question])
 
         # 2. FAISS 기반 초고속 검색
