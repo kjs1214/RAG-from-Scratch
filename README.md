@@ -35,7 +35,7 @@ conda create -n rag_env python=3.11 -y
 conda activate rag_env
 ```
 
-## RTX 3060 하드웨어 가속을 지원하는 PyTorch 2.4.0 (CUDA 12.1) 설치
+## RTX 3060 기준 하드웨어 가속을 지원하는 PyTorch 2.4.0 (CUDA 12.1) 설치
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 ```
