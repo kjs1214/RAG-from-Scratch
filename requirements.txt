@@ -1,0 +1,10 @@
+# --- Vector Search ---
+faiss-cpu==1.8.0.post1
+
+# --- NLP & Embedding ---
+sentence-transformers==3.0.1
+transformers==4.44.0
+accelerate==0.33.0
+
+# --- C-Extension Safety ---
+numpy>=1.24.0,<2.0.0

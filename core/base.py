@@ -1,11 +1,9 @@
+# core/base.py
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
-import torch
+from typing import Any, Dict, List
+import numpy as np
 
-"""
-Data Model Define
-"""
 @dataclass
 class Document:
     doc_id: str
@@ -17,45 +15,35 @@ class RetrievalResult:
     doc: Document
     score: float
 
-"""
-Interface Define
-"""
 class BaseChunker(ABC):
     @abstractmethod
     def split(self, text: str, doc_id_prefix: str = "", metadata: Dict[str, Any] = None) -> List[Document]:
-        """텍스트를 분할하여 Document 리스트로 반환"""
+        """긴 텍스트를 여러 개의 작은 Document 구조체로 쪼개어 반환"""
         pass
 
 class BaseEmbedder(ABC):
-    def __init__(self, device: Optional[str] = None):
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-
     @abstractmethod
-    def embed_texts(self, texts: List[str], batch_size: int = 32) -> List[List[float]]:
-        """문서 리스트를 배치 처리하여 벡터(List[float])로 변환"""
-        pass
-
-    @abstractmethod
-    def embed_query(self, query: str) -> List[float]:
-        """사용자 질문 1개를 벡터로 변환"""
+    def encode(self, texts: List[str]) -> np.ndarray:
         pass
 
 class BaseVectorStore(ABC):
     @abstractmethod
-    def add_documents(self, docs: List[Document], embeddings: List[List[float]]):
-        """문서와 임베딩 벡터를 저장소에 저장"""
+    def add_documents(self, docs: List[Document], embeddings: np.ndarray):
         pass
 
     @abstractmethod
-    def search(self, query_embedding: List[float], top_k: int = 5) -> List[RetrievalResult]:
-        """질의 벡터와 유사한 문서를 top_k개 반환"""
+    def search(self, query_embedding: np.ndarray, top_k: int = 5) -> List[RetrievalResult]:
+        pass
+        
+    @abstractmethod
+    def save(self, save_dir: str):
+        pass
+
+    @abstractmethod
+    def load(self, load_dir: str):
         pass
 
 class BaseGenerator(ABC):
-    def __init__(self, device: Optional[str] = None):
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-
     @abstractmethod
-    def generate(self, query: str, contexts: List[RetrievalResult], max_new_tokens: int = 512) -> str:
-        """검색된 컨텍스트를 바탕으로 답변 생성"""
+    def generate(self, query: str, contexts: List[RetrievalResult], max_new_tokens: int = 256) -> str:
         pass
