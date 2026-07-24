@@ -1,7 +1,7 @@
-# modules/embedder.py
 import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from typing import List
 from core.base import BaseEmbedder
 
 class BasicEmbedder(BaseEmbedder):
@@ -16,5 +16,10 @@ class BasicEmbedder(BaseEmbedder):
         텍스트 리스트를 입력받아 FAISS 연산에 최적화된 float32 타입의 numpy 배열 반환
         """
         # convert_to_numpy=True 옵션으로 텐서가 아닌 numpy 배열로 즉시 반환받음
-        embeddings = self.model.encode(texts, convert_to_numpy=True)
+        embeddings = self.model.encode(
+            texts, 
+            batch_size=32,             # 32개 단위로 쪼개서 GPU 연산
+            show_progress_bar=True,    # 터미널에 진행률(%) 표시
+            convert_to_numpy=True
+            )
         return embeddings.astype(np.float32)

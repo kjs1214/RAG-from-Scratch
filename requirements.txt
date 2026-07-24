@@ -6,5 +6,8 @@ sentence-transformers==3.0.1
 transformers==4.44.0
 accelerate==0.33.0
 
+# --- Data & Utils ---
+datasets>=2.16.0
+
 # --- C-Extension Safety ---
 numpy>=1.24.0,<2.0.0

@@ -1,4 +1,3 @@
-# core/pipeline.py
 import time
 from typing import List, Dict, Any
 from .base import BaseChunker, BaseEmbedder, BaseVectorStore, BaseGenerator, Document

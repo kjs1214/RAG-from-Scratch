@@ -1,4 +1,3 @@
-# modules/vector_store.py
 import os
 import json
 import faiss
