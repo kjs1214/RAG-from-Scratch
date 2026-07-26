@@ -56,6 +56,36 @@ pip install -r requirements.txt
 python build_db.py (2023.11.01 기준 한국어 wikipedia 5만개 데이터 사용)
 ```
 
+# Roadmap & Experimental Points
+
+## 1. Chunking (데이터 전처리)
+*   **현재 구현:** `SimpleChunker` - 고정 크기(400자) 및 오버랩(50자) 기반의 단순 슬라이딩 윈도우 분할.
+*   **고도화 포인트 (Next Step):**
+    *   **Recursive Character Chunking:** 문단, 문장, 단어 단위로 쪼개어 문맥 단절 최소화.
+    *   **Small2Big (Parent Document Retriever):** 임베딩/검색은 촘촘하게(작은 청크), 생성 모델에는 전체 문맥(부모 문서) 전달.
+    *   **Semantic Chunking:** 문장 간 임베딩 유사도를 계산해 문맥이 바뀌는 지점에서 텍스트 분할.
+*   **To Read:** *RAPTOR (Sarthi et al., 2024)*
+
+## 2. Embedding (벡터 변환)
+*   **현재 구현:** `BasicEmbedder` - `ko-sroberta-multitask` 모델을 이용한 Dense Vector 추출 및 Batch 처리.
+*   **고도화 포인트 (Next Step):**
+    *   **모델 교체:** 최대 8,192 토큰 및 다국어 처리가 가능한 SOTA 모델(`BAAI/bge-m3`)로 업그레이드.
+    *   **Hybrid Embedding:** 의미(Semantic) 기반의 Dense 검색과 고유명사/키워드 중심의 Sparse(BM25, SPLADE) 검색 병행.
+*   **To Read:** *SPLADE (Formal et al., 2021)*, *BGE M3-Embedding (Chen et al., 2024)*
+
+## 3. Vector Store & Retriever (검색 모듈)
+*   **현재 구현:** `FAISSVectorStore` - L2 정규화 + Inner Product(내적) 기반의 완전 탐색(Flat) 인덱싱.
+*   **고도화 포인트 (Next Step):**
+    *   **Retriever 모듈 독립 및 Hybrid Search:** FAISS 결과와 BM25 결과를 융합하는 RRF(Reciprocal Rank Fusion) 알고리즘 적용.
+    *   **Re-ranking (교차 인코더):** `bge-reranker` 등을 활용해 1차 검색된 문서들의 연관성을 재계산하여 정밀한 Top-K 선별.
+*   **To Read:** *Lost in the Middle (Liu et al., 2023)*, *Reciprocal Rank Fusion (Cormack et al., 2009)*
+
+## 4. Generator (답변 생성)
+*   **현재 구현:** `LocalGenerator` - `Qwen2.5-3B-Instruct` (fp16) 모델 로드 및 프롬프트 엔지니어링을 통한 Hallucination 제어 (Fallback 로직).
+*   **고도화 포인트 (Next Step):**
+    *   **Query Rewriting:** 사용자의 모호한 질문을 검색에 최적화된 키워드형 쿼리로 자동 변환.
+*   **To Read:** *Self-RAG (Asai et al., 2023)*, *Query Rewriting for RAG (Ma et al., 2023)*
+
 # GPU 모니터링
 ```bash
 watch -n 1 nvidia-smi
