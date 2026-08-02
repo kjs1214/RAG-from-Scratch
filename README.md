@@ -96,7 +96,7 @@ python build_db_recursive.py
 *   **현재 구현:** `LocalGenerator` - `Qwen2.5-3B-Instruct` (fp16) 모델 로드 및 프롬프트 엔지니어링을 통한 Hallucination 제어 (Fallback 로직).
 *   **고도화 포인트 (Next Step):**
     *   **Query Rewriting:** 사용자의 모호한 질문을 검색에 최적화된 키워드형 쿼리로 자동 변환.
-*   **To Read:** *Self-RAG (Asai et al., 2023)*, *Query Rewriting for RAG (Ma et al., 2023)*  
+*   **To Read:** *Self-RAG (Asai et al., 2023)*, *Query Rewriting for RAG (Ma et al., 2023)*
 ##
 
 
