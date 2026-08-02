@@ -99,7 +99,8 @@ python build_db_recursive.py
 *   **To Read:** *Self-RAG (Asai et al., 2023)*, *Query Rewriting for RAG (Ma et al., 2023)*
 
 
-## Step-by-Step RAG RoadMap
+
+# Step-by-Step RAG RoadMap
 
 * **[Step 1.1] 순수 Dense 검색기**
   * *구현:* FAISS (L2 정규화가 적용된 코사인 유사도).
