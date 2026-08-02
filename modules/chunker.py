@@ -110,3 +110,94 @@ class SemanticChunker(BaseChunker):
                 ))
 
         return docs
+    
+class RecursiveChunker(BaseChunker):
+    """
+    [Recursive Chunker]
+    지정된 구분자(separators)의 우선순위에 따라 텍스트를 재귀적으로 분할합니다.
+    일반적으로 '문단 -> 문장 -> 단어' 순으로 쪼개어 의미 훼손을 최소화합니다.
+    """
+    def __init__(self, chunk_size: int = 400, overlap: int = 50, separators: List[str] = None):
+        self.chunk_size = chunk_size
+        self.overlap = overlap
+        # 1순위: 이중 줄바꿈(문단), 2순위: 단일 줄바꿈(문장), 3순위: 공백(단어), 4순위: 글자 단위
+        self.separators = separators or ["\n\n", "\n", " ", ""]
+
+    def _split_recursively(self, text: str, separators: List[str]) -> List[str]:
+        """재귀적으로 텍스트를 쪼개는 내부 함수"""
+        if not separators:
+            return [text]
+
+        separator = separators[0]
+        # 현재 구분자로 텍스트를 나눌 수 있는지 확인 (빈 문자열이면 무조건 글자 단위 분할)
+        if separator != "":
+            splits = text.split(separator)
+        else:
+            splits = list(text)
+
+        good_splits = []
+        for s in splits:
+            if len(s) < self.chunk_size:
+                good_splits.append(s)
+            else:
+                # 쪼개진 조각이 여전히 제한 크기보다 크면, 다음 우선순위 구분자로 재귀 호출
+                if len(separators) > 1:
+                    good_splits.extend(self._split_recursively(s, separators[1:]))
+                else:
+                    # 더 이상 구분자가 없으면 강제로 자름
+                    good_splits.append(s)
+                    
+        return good_splits
+
+    def split(self, text: str, doc_id_prefix: str = "", metadata: Dict[str, Any] = None) -> List[Document]:
+        if metadata is None: metadata = {}
+        
+        # 1. 텍스트를 최대한 의미 단위로 잘게 쪼갬
+        splits = self._split_recursively(text, self.separators)
+        
+        docs = []
+        current_chunk = []
+        current_length = 0
+        chunk_idx = 0
+
+        # 2. 쪼개진 조각들을 chunk_size를 넘지 않는 선에서 다시 이어 붙임 (Merge)
+        for s in splits:
+            s_len = len(s)
+            if current_length + s_len > self.chunk_size and current_chunk:
+                # 덩어리가 꽉 차면 Document 상자로 포장
+                chunk_text = "".join(current_chunk).strip()
+                if chunk_text:
+                    docs.append(Document(
+                        doc_id=f"{doc_id_prefix}_chunk_{chunk_idx}",
+                        content=chunk_text,
+                        metadata=metadata.copy()
+                    ))
+                    chunk_idx += 1
+                
+                # Overlap 처리 로직: 끝부분 조각들을 남겨서 다음 덩어리에 포함
+                overlap_length = 0
+                overlap_chunk = []
+                for prev_s in reversed(current_chunk):
+                    if overlap_length + len(prev_s) <= self.overlap:
+                        overlap_chunk.insert(0, prev_s)
+                        overlap_length += len(prev_s)
+                    else:
+                        break
+                        
+                current_chunk = overlap_chunk
+                current_length = sum(len(c) for c in current_chunk)
+
+            current_chunk.append(s)
+            current_length += s_len
+
+        # 마지막 찌꺼기 덩어리 처리
+        if current_chunk:
+            chunk_text = "".join(current_chunk).strip()
+            if chunk_text:
+                docs.append(Document(
+                    doc_id=f"{doc_id_prefix}_chunk_{chunk_idx}",
+                    content=chunk_text,
+                    metadata=metadata.copy()
+                ))
+
+        return docs

@@ -40,15 +40,13 @@ def main():
     )
     
     vector_store = FAISSVectorStore(dimension=768)
-    retriever = BaselineRetriever(vector_store=vector_store)
-    generator = LocalGenerator()
 
     pipeline = RAGPipeline(
         chunker=chunker,
         embedder=embedder,
         vector_stores=[vector_store],
-        retriever=retriever,
-        generator=generator
+        retriever=None,
+        generator=None
     )
 
     pipeline.build_index(raw_documents=raw_docs)
