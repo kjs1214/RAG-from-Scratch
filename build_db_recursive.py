@@ -58,7 +58,7 @@ def main():
     pipeline.build_index(raw_documents=raw_docs)
 
     # 5. 디스크 저장
-    os.makedirs(os.path.dirname(save_db_path), exist_ok=True)
+    os.makedirs(save_db_path, exist_ok=True)
     vector_store.save(save_db_path)
     
     elapsed = time.time() - start_time

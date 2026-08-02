@@ -55,7 +55,7 @@ def main():
     print("\n텍스트 분할 및 벡터 DB 적재 파이프라인 가동...")
     pipeline.build_index(raw_documents=raw_docs)
 
-    os.makedirs(os.path.dirname(save_db_path), exist_ok=True)
+    os.makedirs(save_db_path, exist_ok=True)
     vector_store.save(save_db_path)
     
     elapsed = time.time() - start_time
