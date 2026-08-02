@@ -1,7 +1,7 @@
 import os
 import time
 from datasets import load_dataset
-from modules.chunker import SimpleChunker
+from modules.chunker import SemanticChunker
 from modules.embedder import BasicEmbedder
 from modules.vector_store import FAISSVectorStore
 from modules.retriever import BaselineRetriever
@@ -20,19 +20,25 @@ def load_hf_wikipedia_korean(num_docs: int = 50000):
     return documents
 
 def main():
-    # [Baseline용 독립 경로]
-    save_db_path = "./dbs/wiki_ko_simple_db"
+    # [Proposed용 독립 경로]
+    save_db_path = "./dbs/wiki_ko_semantic_db"
     start_time = time.time()
 
-    print("========== [Baseline DB 인덱싱 시작 (Simple Chunker)] ==========")
+    print("========== [Proposed DB 인덱싱 시작 (Semantic Chunker)] ==========")
     raw_docs = load_hf_wikipedia_korean(num_docs=50000)
     
     if not raw_docs:
         return
 
-    # 1. SimpleChunker 사용
-    chunker = SimpleChunker(chunk_size=400, overlap=50)
     embedder = BasicEmbedder()
+    
+    # 1. SemanticChunker 사용 
+    # [핵심] 리턴된 EmbedResult 상자에서 dense(numpy 배열)만 꺼내서 청커에게 전달하는 람다 함수 적용!
+    chunker = SemanticChunker(
+        embed_func=lambda texts: embedder.encode(texts).dense,
+        percentile_threshold=20
+    )
+    
     vector_store = FAISSVectorStore(dimension=768)
     retriever = BaselineRetriever(vector_store=vector_store)
     generator = LocalGenerator()

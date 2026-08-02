@@ -2,7 +2,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from typing import List, Tuple
 
-from core.base import BaseGenerator, RetrievalResult
+# [수정됨] RetrievalResult -> SearchResult로 변경
+from core.base import BaseGenerator, SearchResult
 
 class LocalGenerator(BaseGenerator):
     def __init__(self, model_name: str = "Qwen/Qwen2.5-3B-Instruct"):
@@ -16,14 +17,13 @@ class LocalGenerator(BaseGenerator):
             low_cpu_mem_usage=True
         ).to(self.device)
 
-    # system_prompt 파라미터 추가
-    def generate(self, query: str, contexts: List[RetrievalResult], max_new_tokens: int = 512, system_prompt: str = None) -> str:
+    # [수정됨] contexts 파라미터 타입을 List[SearchResult]로 변경
+    def generate(self, query: str, contexts: List[SearchResult], max_new_tokens: int = 512, system_prompt: str = None) -> str:
         
         if contexts:
-            # RAG 모드
+            # RAG 모드 (내부 프롬프트 로직 유지)
             context_text = "\n".join([f"[문서 {i+1}] {res.doc.content}" for i, res in enumerate(contexts)])
             
-            # 지식을 섞지 말고, 문서에 없으면 모른다고 방어하도록 하드코딩
             default_rag_prompt = "주어진 참조 문서만을 바탕으로 답변하세요. 참조 문서에 질문에 대한 단서가 전혀 없다면 절대 당신의 지식으로 지어내지 말고 '문서에서 해당 정보를 찾을 수 없습니다.'라고만 답변하세요."
             sp = system_prompt if system_prompt else default_rag_prompt
             
@@ -32,7 +32,7 @@ class LocalGenerator(BaseGenerator):
                 {"role": "user", "content": f"참조 문서:\n{context_text}\n\n질문: {query}"}
             ]
         else:
-            # Fallback 모드
+            # Fallback 모드 (내부 프롬프트 로직 유지)
             sp = system_prompt if system_prompt else "당신은 친절하고 유용한 AI 보조입니다."
             messages = [
                 {"role": "system", "content": sp},
