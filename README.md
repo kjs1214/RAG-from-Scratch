@@ -97,7 +97,6 @@ python build_db_recursive.py
 *   **고도화 포인트 (Next Step):**
     *   **Query Rewriting:** 사용자의 모호한 질문을 검색에 최적화된 키워드형 쿼리로 자동 변환.
 *   **To Read:** *Self-RAG (Asai et al., 2023)*, *Query Rewriting for RAG (Ma et al., 2023)*  
-
 ##
 
 
