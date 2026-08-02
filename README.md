@@ -73,9 +73,8 @@ python build_db_recursive.py
     * `SimpleChunker` - 고정 크기(400자) 및 오버랩(50자) 기반의 단순 슬라이딩 윈도우 분할.
     * `SemanticChunker` - 문장 간 임베딩 코사인 유사도를 계산해 문맥이 단절되는 지점을 동적으로 분할.
     * `RecursiveChunker` - 지정된 구분자(\n\n, \n, 공백 등)의 우선순위에 따라 텍스트를 재귀적으로 쪼개어 문맥 훼손을 최소화
-    
+
 *   **고도화 포인트 (Next Step):**
-    *   **Recursive Character Chunking:** 문단, 문장, 단어 단위로 쪼개어 문맥 단절 최소화.
     *   **Small2Big (Parent Document Retriever):** 임베딩/검색은 촘촘하게(작은 청크), 생성 모델에는 전체 문맥(부모 문서) 전달.
 *   **To Read:** *RAPTOR (Sarthi et al., 2024)*
 
