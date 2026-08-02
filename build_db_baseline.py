@@ -29,7 +29,7 @@ def load_hf_wikipedia_korean(num_docs: int = 50000):
 
 def main():
     # [핵심 1] Baseline 전용 저장 경로
-    save_db_path = "./dbs/wiki_ko_simple_db"
+    save_db_path = "./dbs/wiki_ko_baseline_db"
     start_time = time.time()
 
     print("========== [Baseline DB 인덱싱 시작 (Simple Chunker)] ==========")
