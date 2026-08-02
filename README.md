@@ -54,9 +54,16 @@ pip install -r requirements.txt
 ```bash
 # 1. 단순 글자 수 기반 분할 DB 구축
 python build_db_baseline.py
+```
 
+```bash
 # 2. 의미 기반 분할 DB 구축
 python build_db_proposed.py
+```
+
+```bash
+#3. 규칙 기반 재귀적 분할 DB 구축
+python build_db_recursive.py
 ```
 
 # Roadmap & Experimental Points
