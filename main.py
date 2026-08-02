@@ -99,7 +99,7 @@ def main():
                     
                     content_snippet = get_smart_snippet(user_query, raw_content)
                         
-                    print(f"  {i+1}. {title} (L2 Distance: {doc_info['score']:.4f})")
+                    print(f"  {i+1}. {title} (Cosine Similarity: {doc_info['score']:.4f})")
                     print(f"     ➔ {content_snippet}\n")
                 print("-" * 60)
                 
