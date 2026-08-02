@@ -12,7 +12,7 @@ RAG-from-Scratch/
 │   ├── chunker.py           # 긴 텍스트를 적절한 크기로 자르는 텍스트 분할 (Simple, Semantic, Recursive)
 │   ├── embedder.py          # 텍스트를 다차원 벡터로 변환하는 임베딩 모듈
 │   ├── vector_store.py      # FAISS 기반 초고속 벡터 검색 및 디스크 저장/로드 (창고 역할)
-│   ├── retriever.py         # [NEW] 단일/다중 DB를 조합하여 최적의 검색 전략을 관리하는 모듈
+│   ├── retriever.py         # 단일/다중 DB를 조합하여 최적의 검색 전략을 관리하는 모듈
 │   └── generator.py         # 검색된 문서를 바탕으로 LLM(Qwen 등)이 답변을 생성하는 모듈
 │
 ├── dbs/                     # [자동 생성] 텍스트 데이터를 벡터화하여 영구 저장하는 로컬 DB 폴더
